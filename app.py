@@ -11,22 +11,24 @@
 
 from sgtk.platform import Application
 
-class StgkStarterApp(Application):
+class CreateTicket(Application):
     """
     The app entry point. This class is responsible for intializing and tearing down
     the application, handle menu registration etc.
     """
-    
+
     def init_app(self):
         """
         Called as the application is being initialized
         """
-        
+
         # first, we use the special import_module command to access the app module
         # that resides inside the python folder in the app. This is where the actual UI
         # and business logic of the app is kept. By using the import_module command,
         # toolkit's code reload mechanism will work properly.
-        app_payload = self.import_module("app")
+        create_ticket = self.import_module("create_ticket")
+
+        self.__ticketHandler = create_ticket.TicketHandler(self)
 
         # now register a *command*, which is normally a menu entry of some kind on a Shotgun
         # menu (but it depends on the engine). The engine will manage this command and 
@@ -37,13 +39,22 @@ class StgkStarterApp(Application):
         #
         # Note! By passing the additional (special) entity_type and entity_ids parameters,
         # the Shotgun enging will pass the current selection into the app via those parameters.
-        # Also note that this does not work in any other engines.
-        #
-        menu_callback = lambda entity_type, entity_ids: app_payload.dialog.show_dialog(self, entity_type, entity_ids)
+        # Also note that this does not work in any other engines.        
 
-        # in order for the shotgun engine to enable multiple selection mode, we need to pass a special param flag:
-        parameters = { "supports_multiple_selection": True }
+        deny_permissions = self.get_setting("deny_permissions")
+        deny_platforms = self.get_setting("deny_platforms")
+
+        # in order for the shotgun engine to enable multiple selection mode,
+        #  we need to pass a special param flag:
+
+        parameters = {
+            "title": "Create New Ticket",
+            "deny_permissions": deny_permissions,
+            "deny_platforms": deny_platforms,
+            "supports_multiple_selection": False
+        }
 
         # now register the command with the engine
-        self.engine.register_command("Starter Template App...", menu_callback, parameters)
-        
+        self.engine.register_command("create_ticket",
+                                     self.__ticketHandler.show_ticket_dlg,
+                                     parameters)
