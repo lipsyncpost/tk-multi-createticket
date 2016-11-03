@@ -31,7 +31,7 @@ class AppDialog(QtGui.QWidget):
 
     submit = QtCore.Signal()
 
-    def __init__(self, entity_type, entity_ids):
+    def __init__(self, entity_type, entity_id):
         """
         Constructor
         """
@@ -64,7 +64,14 @@ class AppDialog(QtGui.QWidget):
             self.ui.ticketType_box.addItem(tt)
 
         # lastly, set up our very basic UI
-        filters = [['id', 'is', entity_ids]]
+        if not entity_type:
+            ctx = self._app.context
+
+            entity = ctx.entity
+            entity_type = entity['type']
+            entity_id = entity['id']
+
+        filters = [['id', 'is', entity_id]]
         fields = ['code']
         entity = self._app.shotgun.find_one(entity_type, filters, fields)
         selection_text = "Current context: <strong><i>{0}</i></strong>"
