@@ -11,7 +11,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 # The path to output all built .py files to: 
-UI_PYTHON_PATH=../python/app/ui
+UI_PYTHON_PATH=../python/create_ticket/ui
 
 
 # Helper functions to build UI files
@@ -22,7 +22,8 @@ function build_qt {
     $1 $2 > $UI_PYTHON_PATH/$3.py
     
     # replace PySide imports with tank.platform.qt and remove line containing Created by date
-    sed -i "" -e "s/from PySide import/from tank.platform.qt import/g" -e "/# Created:/d" $UI_PYTHON_PATH/$3.py
+    echo $UI_PYTHON_PATH/$3.py
+    sed -i "" -e "s/from PySide import/from tank.platform.qt import/g" -e "/# Created:/d" $UI_PYTHON_PATH/$3.py > /dev/null 2>&1
 }
 
 function build_ui {
