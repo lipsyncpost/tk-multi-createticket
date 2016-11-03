@@ -10,7 +10,7 @@ class TicketHandler(object):
 
         self._app = app
 
-    def show_ticket_dlg(self, entity_type, entity_ids):
+    def show_ticket_dlg(self, entity_type=None, entity_id=None):
         """
         Shows the main dialog window, using the special Shotgun multi-select mode.
         """
@@ -21,13 +21,15 @@ class TicketHandler(object):
 
         # we pass the dialog class to this method and leave the actual construction
         # to be carried out by toolkit.
+
         try:
             from .dialog import AppDialog
+
             form = self._app.engine.show_dialog("Create Support Ticket",
                                                 self._app,
                                                 AppDialog,
                                                 entity_type,
-                                                entity_ids)
+                                                entity_id)
             form.submit.connect(lambda f=form: self._on_submit(f))
         except TankError, e:
             QtGui.QMessageBox.information(None, "Unable To show ticket dialog!", "%s" % e)

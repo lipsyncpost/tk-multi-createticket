@@ -36,7 +36,7 @@ configuration:
 
 # this app works in all engines - it does not contain 
 # any host application specific commands
-supported_engines: [tk-shotgun]
+supported_engines: 
 
 # the Shotgun fields that this engine needs in order to operate correctly
 requires_shotgun_fields:

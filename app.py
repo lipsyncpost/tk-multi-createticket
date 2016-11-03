@@ -48,6 +48,7 @@ class CreateTicket(Application):
         #  we need to pass a special param flag:
 
         parameters = {
+            "short_name": "create_ticket",
             "title": "Create New Ticket",
             "deny_permissions": deny_permissions,
             "deny_platforms": deny_platforms,
@@ -55,6 +56,6 @@ class CreateTicket(Application):
         }
 
         # now register the command with the engine
-        self.engine.register_command("create_ticket",
+        self.engine.register_command(parameters['title'],
                                      self.__ticketHandler.show_ticket_dlg,
                                      parameters)
