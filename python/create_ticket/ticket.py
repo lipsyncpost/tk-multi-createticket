@@ -10,7 +10,7 @@ class TicketHandler(object):
 
         self._app = app
 
-    def show_ticket_dlg(self, entity_type=None, entity_id=None):
+    def show_ticket_dlg(self, entity_type=None, entity_ids=None):
         """
         Shows the main dialog window, using the special Shotgun multi-select mode.
         """
@@ -29,7 +29,7 @@ class TicketHandler(object):
                                                 self._app,
                                                 AppDialog,
                                                 entity_type,
-                                                entity_id)
+                                                entity_ids)
             form.submit.connect(lambda f=form: self._on_submit(f))
         except TankError, e:
             QtGui.QMessageBox.information(None, "Unable To show ticket dialog!", "%s" % e)
@@ -48,7 +48,12 @@ class TicketHandler(object):
 
             ctx = self._app.context
 
-            data = {"sg_link": ctx.entity,
+            sg_link = ctx.entity if ctx.entity else ctx.project
+
+            if ctx.task:
+                sg_link = ctx.task
+
+            data = {"sg_link": sg_link,
                     "project": ctx.project,
                     "created_by": ctx.user
                     }

@@ -14,6 +14,12 @@
 
 configuration:
 
+    display_name:
+        type: str
+        default_value: Create Ticket
+        description: Specify the name that should be used in menus and the main
+                     ticket dialog
+    
     deny_permissions:
         type: list
         values: {type: shotgun_permission_group}

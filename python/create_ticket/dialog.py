@@ -31,7 +31,7 @@ class AppDialog(QtGui.QWidget):
 
     submit = QtCore.Signal()
 
-    def __init__(self, entity_type, entity_id):
+    def __init__(self, entity_type, entity_ids):
         """
         Constructor
         """
@@ -63,19 +63,30 @@ class AppDialog(QtGui.QWidget):
         for tt in TICKET_TYPES:
             self.ui.ticketType_box.addItem(tt)
 
-        # lastly, set up our very basic UI
-        if not entity_type:
-            ctx = self._app.context
-
-            entity = ctx.entity
-            entity_type = entity['type']
-            entity_id = entity['id']
-
-        filters = [['id', 'is', entity_id]]
-        fields = ['code']
-        entity = self._app.shotgun.find_one(entity_type, filters, fields)
+        ctx = self._app.context
         selection_text = "Current context: <strong><i>{0}</i></strong>"
-        selection_text = selection_text.format(entity['code'])
+        # lastly, set up our very basic UI
+        entity = None
+        if not ctx.entity and not ctx.task:
+            ctx_text = ctx.project['name']
+            self._app.engine.log_debug('Context is project')
+        elif not ctx.task:
+            entity = ctx.entity
+            self._app.engine.log_debug('Context is {}'.format(entity['type']))
+
+            if not entity_type:
+                entity_type = entity['type']
+                entity_ids = entity['id']
+
+            filters = [['id', 'is', entity_ids]]
+            fields = ['code']
+            entity = self._app.shotgun.find_one(entity_type, filters, fields)
+            ctx_text = entity['code']
+        else:
+            ctx_text = ctx.task['name']
+            self._app.engine.log_debug('Context is Task {}'.format(ctx_text))
+
+        selection_text = selection_text.format(ctx_text)
         self.ui.context_label.setText(selection_text)
 
     def _on_submit(self):
