@@ -1,5 +1,8 @@
 # Ticket creator app
 
+# 0.1.2
+
+* support for tk-desktop and Tasks 
 
 # 0.1.1
 
