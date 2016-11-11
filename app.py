@@ -47,15 +47,27 @@ class CreateTicket(Application):
         # in order for the shotgun engine to enable multiple selection mode,
         #  we need to pass a special param flag:
 
+        # register commands:
+        display_name = self.get_setting("display_name")
+
+        # "Publish Render" ---> publish_render
+        command_name = display_name.lower().replace(" ", "_")
+        if command_name.endswith("..."):
+            command_name = command_name[:-3]
+
         parameters = {
-            "short_name": "create_ticket",
-            "title": "Create New Ticket",
+            "short_name": command_name,
+            "title": "{} ...".format(display_name),
             "deny_permissions": deny_permissions,
             "deny_platforms": deny_platforms,
             "supports_multiple_selection": False
         }
 
+        menu_name = "{} ...".format(display_name)
+        if self.engine.name == "tk-shotgun":
+            menu_name = command_name
+
         # now register the command with the engine
-        self.engine.register_command(parameters['title'],
+        self.engine.register_command(menu_name,
                                      self.__ticketHandler.show_ticket_dlg,
                                      parameters)
